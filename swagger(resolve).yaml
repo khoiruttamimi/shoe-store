@@ -1,0 +1,506 @@
+---
+swagger: "2.0"
+info:
+  description: This is a Shoe Store API
+  version: 1.0.0
+  title: Shoe Store App API
+  contact:
+    email: m.khoiruttamimi@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: virtserver.swaggerhub.com
+basePath: /khoiruttamimi/shoe-store/1.0.0
+tags:
+- name: admins
+  description: Admin can add product
+- name: customers
+  description: Customer can't add product
+schemes:
+- https
+paths:
+  /users:
+    get:
+      tags:
+      - admins
+      summary: searches users
+      produces:
+      - application/json
+      parameters:
+      - name: search
+        in: query
+        required: false
+        type: string
+      - name: page
+        in: query
+        required: false
+        type: integer
+        minimum: 0
+        format: int32
+      - name: limit
+        in: query
+        required: false
+        type: integer
+        maximum: 50
+        minimum: 0
+        format: int32
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/inline_response_200'
+        "400":
+          description: bad input parameter
+    post:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        required: false
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        "200":
+          description: success add response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+  /users/:id:
+    get:
+      tags:
+      - admins
+      - customers
+      summary: get detail
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/inline_response_200_2'
+        "400":
+          description: bad input parameter
+    put:
+      tags:
+      - admins
+      - customers
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        required: false
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        "200":
+          description: success edit response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+    delete:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: success delete response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+  /product:
+    get:
+      tags:
+      - admins
+      - customers
+      summary: searches product
+      produces:
+      - application/json
+      parameters:
+      - name: search
+        in: query
+        required: false
+        type: string
+      - name: page
+        in: query
+        required: false
+        type: integer
+        minimum: 0
+        format: int32
+      - name: limit
+        in: query
+        required: false
+        type: integer
+        maximum: 50
+        minimum: 0
+        format: int32
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/inline_response_200_3'
+        "400":
+          description: bad input parameter
+    post:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: product
+        required: false
+        schema:
+          $ref: '#/definitions/Product'
+      responses:
+        "200":
+          description: success add response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+  /product/:id:
+    get:
+      tags:
+      - admins
+      - customers
+      summary: get detail
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/inline_response_200_4'
+        "400":
+          description: bad input parameter
+    put:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: product
+        required: false
+        schema:
+          $ref: '#/definitions/Product'
+      responses:
+        "200":
+          description: success edit response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+    delete:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: success delete response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+  /brand:
+    get:
+      tags:
+      - admins
+      summary: searches brand
+      produces:
+      - application/json
+      parameters:
+      - name: search
+        in: query
+        required: false
+        type: string
+      - name: page
+        in: query
+        required: false
+        type: integer
+        minimum: 0
+        format: int32
+      - name: limit
+        in: query
+        required: false
+        type: integer
+        maximum: 50
+        minimum: 0
+        format: int32
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/inline_response_200_5'
+        "400":
+          description: bad input parameter
+    post:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: brand
+        required: false
+        schema:
+          $ref: '#/definitions/Brand'
+      responses:
+        "200":
+          description: success add response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+  /brand/:id:
+    get:
+      tags:
+      - admins
+      summary: get detail
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/inline_response_200_4'
+        "400":
+          description: bad input parameter
+    put:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: brand
+        required: false
+        schema:
+          $ref: '#/definitions/Brand'
+      responses:
+        "200":
+          description: success edit response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+    delete:
+      tags:
+      - admins
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: success delete response
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "400":
+          description: bad input parameter
+definitions:
+  User:
+    type: object
+    required:
+    - dob
+    - gender
+    - id
+    - name
+    - password
+    - role
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+        example: Joko
+      dob:
+        type: string
+        format: date
+        example: 2016-08-29T00:00:00.000+0000
+      gender:
+        type: string
+        example: M
+      role:
+        type: string
+        example: customer
+      status:
+        type: boolean
+        example: true
+      password:
+        type: string
+        example: Mfsa33arq33387asdgad
+      updated_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001+0000
+      created_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001+0000
+  Product:
+    type: object
+    required:
+    - code
+    - id
+    - name
+    - product_brand_id
+    - status
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      product_brand_id:
+        type: integer
+        format: int64
+        example: 1
+      code:
+        type: string
+        example: c01
+      name:
+        type: string
+        example: sepatu
+      status:
+        type: boolean
+        example: true
+      updated_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001+0000
+      created_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001+0000
+  Brand:
+    type: object
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+        example: sepatu
+      updated_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001+0000
+      created_at:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001+0000
+  inline_response_200:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+  inline_response_200_1_data:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+  inline_response_200_1:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/inline_response_200_1_data'
+  inline_response_200_2:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/User'
+  inline_response_200_3:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Product'
+  inline_response_200_4:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/Product'
+  inline_response_200_5:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Brand'
