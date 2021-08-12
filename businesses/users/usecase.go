@@ -69,3 +69,40 @@ func (uc *userUsecase) Store(ctx context.Context, userDomain *Domain) error {
 
 	return nil
 }
+func (uc *userUsecase) Login(ctx context.Context, userDomain *Domain) (interface{}, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+
+	if strings.TrimSpace(userDomain.Username) == "" && strings.TrimSpace(userDomain.Password) == "" {
+		return nil, businesses.ErrUsernamePasswordNotFound
+	}
+
+	user, err := uc.userRepository.GetByUsername(ctx, userDomain.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	if !encrypt.ValidateHash(userDomain.Password, user.Password) {
+		return nil, businesses.ErrInternalServer
+	}
+
+	token := uc.jwtAuth.GenerateToken(user.Id)
+	res := struct {
+		Role  string `json:"role"`
+		Token string `json:"token"`
+	}{Role: user.Role, Token: token}
+
+	return res, nil
+}
+
+func (cu *userUsecase) GetProfile(ctx context.Context, userID int) (Domain, error) {
+	if userID <= 0 {
+		return Domain{}, businesses.ErrIDNotFound
+	}
+
+	resp, err := cu.userRepository.GetByID(ctx, userID)
+	if err != nil {
+		return Domain{}, err
+	}
+	return resp, nil
+}
