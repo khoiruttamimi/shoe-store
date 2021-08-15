@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"shoe-store/controllers/category"
-	"shoe-store/controllers/news"
+	"shoe-store/controllers/brand"
+	"shoe-store/controllers/product"
+	"shoe-store/controllers/transaction"
 	"shoe-store/controllers/users"
 
 	echo "github.com/labstack/echo/v4"
@@ -10,23 +11,34 @@ import (
 )
 
 type ControllerList struct {
-	JWTMiddleware      middleware.JWTConfig
-	UserController     users.UserController
-	NewsController     news.NewsController
-	CategoryController category.CategoryController
+	JWTMiddleware         middleware.JWTConfig
+	UserController        users.UserController
+	ProductController     product.ProductController
+	BrandController       brand.BrandController
+	TransactionController transaction.TransactionController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
+	jwtAuth := middleware.JWTWithConfig(cl.JWTMiddleware)
 	api := e.Group("v1/api/")
 	users := api.Group("users")
 	users.POST("/register", cl.UserController.Register)
 	users.POST("/login", cl.UserController.Login)
-	users.GET("/profile", cl.UserController.GetProfile, middleware.JWTWithConfig(cl.JWTMiddleware))
+	users.GET("/profile", cl.UserController.GetProfile, jwtAuth)
+	users.PUT("/profile", cl.UserController.UpdateProfile, jwtAuth)
 
-	category := api.Group("category")
-	category.GET("/list", cl.CategoryController.GetAll, middleware.JWTWithConfig(cl.JWTMiddleware))
+	brand := api.Group("brands", jwtAuth)
+	brand.POST("", cl.BrandController.Store)
+	brand.GET("", cl.BrandController.GetAll)
 
-	news := api.Group("news")
-	news.POST("/store", cl.NewsController.Store, middleware.JWTWithConfig(cl.JWTMiddleware))
-	news.PUT("/update", cl.NewsController.Update, middleware.JWTWithConfig(cl.JWTMiddleware))
+	product := api.Group("products", jwtAuth)
+	product.POST("", cl.ProductController.Store)
+	product.GET("", cl.ProductController.GetAll)
+	product.GET("/:id", cl.ProductController.GetByID)
+	product.PUT("/:id", cl.ProductController.Update)
+
+	transaction := api.Group("transactions", jwtAuth)
+	transaction.POST("", cl.TransactionController.Shopping)
+	transaction.GET("", cl.TransactionController.GetAll)
+
 }

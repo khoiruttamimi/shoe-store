@@ -14,9 +14,9 @@ info:
 # tags are used for organizing operations
 tags:
 - name: admins
-  description: Admin can add product
+  description: Admin can add brand
 - name: customers
-  description: Customer can't add product
+  description: Customer can't add brand
 
 paths:
   /users:
@@ -176,7 +176,7 @@ paths:
                     example: 1
         400:
           description: bad input parameter
-  /product:
+  /brand:
     post:
       tags: 
         - admins
@@ -186,9 +186,9 @@ paths:
       - application/json
       parameters:
       - in: body
-        name: product
+        name: brand
         schema:
-          $ref: '#/definitions/Product'
+          $ref: '#/definitions/Brand'
       responses:
         200:
           description: success add response
@@ -213,7 +213,7 @@ paths:
       tags:
       - admins
       - customers
-      summary: searches product
+      summary: searches brand
       produces:
       - application/json
       parameters:
@@ -247,10 +247,10 @@ paths:
               data: 
                 type: array
                 items:
-                  $ref: '#/definitions/Product'
+                  $ref: '#/definitions/Brand'
         400:
           description: bad input parameter
-  /product/:id:
+  /brand/:id:
     get:
       tags:
       - admins
@@ -271,7 +271,7 @@ paths:
               message: 
                 type: string
               data: 
-                $ref: '#/definitions/Product'
+                $ref: '#/definitions/Brand'
         400:
           description: bad input parameter
     put:
@@ -283,9 +283,9 @@ paths:
       - application/json
       parameters:
       - in: body
-        name: product
+        name: brand
         schema:
-          $ref: '#/definitions/Product'
+          $ref: '#/definitions/Brand'
       responses:
         200:
           description: success edit response
@@ -426,7 +426,7 @@ paths:
               message: 
                 type: string
               data: 
-                $ref: '#/definitions/Product'
+                $ref: '#/definitions/Brand'
         400:
           description: bad input parameter
     put:
@@ -530,11 +530,11 @@ definitions:
         type: string
         format: date-time
         example: 2016-08-29T09:12:33.001Z
-  Product:
+  Brand:
     type: object
     required:
     - id
-    - product_brand_id
+    - brand_brand_id
     - code
     - name
     - status
@@ -543,7 +543,7 @@ definitions:
         type: integer
         format: int64
         example: 1
-      product_brand_id:
+      brand_brand_id:
         type: integer
         format: int64
         example: 1

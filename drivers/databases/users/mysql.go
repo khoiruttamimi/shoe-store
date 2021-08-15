@@ -2,7 +2,7 @@ package users
 
 import (
 	"context"
-	"shoe-store/businesses/users"
+	"shoe-store/domains/users"
 
 	"gorm.io/gorm"
 )
@@ -17,53 +17,64 @@ func NewMySQLUserRepository(conn *gorm.DB) users.Repository {
 	}
 }
 
-func (nr *mysqlUsersRepository) Fetch(ctx context.Context, page, perpage int) ([]users.Domain, int, error) {
+func (ur *mysqlUsersRepository) Fetch(ctx context.Context, page, perpage int) ([]users.Domain, int, error) {
 	rec := []Users{}
 
 	offset := (page - 1) * perpage
-	err := nr.Conn.Offset(offset).Limit(perpage).Find(&rec).Error
+	err := ur.Conn.Offset(offset).Limit(perpage).Find(&rec).Error
 	if err != nil {
 		return []users.Domain{}, 0, err
 	}
 
 	var totalData int64
-	err = nr.Conn.Count(&totalData).Error
+	err = ur.Conn.Count(&totalData).Error
 	if err != nil {
 		return []users.Domain{}, 0, err
 	}
 
-	var domainNews []users.Domain
+	var domainProduct []users.Domain
 	for _, value := range rec {
-		domainNews = append(domainNews, value.toDomain())
+		domainProduct = append(domainProduct, value.toDomain())
 	}
-	return domainNews, int(totalData), nil
+	return domainProduct, int(totalData), nil
 }
 
-func (nr *mysqlUsersRepository) GetByID(ctx context.Context, userId int) (users.Domain, error) {
+func (ur *mysqlUsersRepository) GetByID(ctx context.Context, userID int) (users.Domain, error) {
 	rec := Users{}
-	err := nr.Conn.Where("id = ?", userId).First(&rec).Error
+	err := ur.Conn.Where("id = ?", userID).First(&rec).Error
 	if err != nil {
 		return users.Domain{}, err
 	}
 	return rec.toDomain(), nil
 }
 
-func (nr *mysqlUsersRepository) GetByUsername(ctx context.Context, username string) (users.Domain, error) {
+func (ur *mysqlUsersRepository) GetByPhone(ctx context.Context, phone string) (users.Domain, error) {
 	rec := Users{}
-	err := nr.Conn.Where("username = ?", username).First(&rec).Error
+	err := ur.Conn.Where("phone = ?", phone).First(&rec).Error
 	if err != nil {
 		return users.Domain{}, err
 	}
 	return rec.toDomain(), nil
 }
 
-func (nr *mysqlUsersRepository) Store(ctx context.Context, userDomain *users.Domain) error {
+func (ur *mysqlUsersRepository) Store(ctx context.Context, userDomain *users.Domain) (users.Domain, error) {
 	rec := fromDomain(*userDomain)
 
-	result := nr.Conn.Create(rec)
+	result := ur.Conn.Create(&rec)
 	if result.Error != nil {
-		return result.Error
+		return users.Domain{}, result.Error
 	}
 
-	return nil
+	return rec.toDomain(), nil
+}
+
+func (ur *mysqlUsersRepository) Update(ctx context.Context, userDomain *users.Domain) (users.Domain, error) {
+	rec := fromDomain(*userDomain)
+
+	result := ur.Conn.Updates(&rec)
+	if result.Error != nil {
+		return users.Domain{}, result.Error
+	}
+
+	return rec.toDomain(), nil
 }

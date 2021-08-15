@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"shoe-store/businesses/iplocator"
+	"shoe-store/domains/iplocator"
 )
 
 type IPLocator struct {

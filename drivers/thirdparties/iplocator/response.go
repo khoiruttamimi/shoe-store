@@ -1,6 +1,6 @@
 package iplocator
 
-import "shoe-store/businesses/iplocator"
+import "shoe-store/domains/iplocator"
 
 type Response struct {
 	IP                 string  `json:"ip"`
