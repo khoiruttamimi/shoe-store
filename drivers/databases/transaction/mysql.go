@@ -17,10 +17,10 @@ func NewTransactionRepository(conn *gorm.DB) transaction.Repository {
 	}
 }
 
-func (tr *transactionRepository) GetAll(ctx context.Context, status string) ([]transaction.Domain, error) {
+func (tr *transactionRepository) GetAll(ctx context.Context, userID int) ([]transaction.Domain, error) {
 	rec := []Transaction{}
 
-	err := tr.conn.Preload("User").Where("status = ?", status).Find(&rec).Error
+	err := tr.conn.Preload("User").Where("user_id = ?", userID).Find(&rec).Error
 	if err != nil {
 		return []transaction.Domain{}, err
 	}
@@ -33,6 +33,21 @@ func (tr *transactionRepository) GetAll(ctx context.Context, status string) ([]t
 	return transactionDomain, nil
 }
 
+func (tr *transactionRepository) GetByID(ctx context.Context, transactionID int, userID int) (transaction.Domain, error) {
+	rec := Transaction{}
+	err := tr.conn.
+		Preload("User").
+		Preload("TransactionItems").
+		Preload("TransactionItems.Product").
+		Where("id = ?", transactionID).
+		Where("user_id = ?", userID).
+		First(&rec).Error
+	if err != nil {
+		return transaction.Domain{}, err
+	}
+	return rec.toDomain(), nil
+}
+
 func (tr *transactionRepository) Store(ctx context.Context, transactionDomain *transaction.Domain) (transaction.Domain, error) {
 	rec := fromDomain(transactionDomain)
 
@@ -40,7 +55,7 @@ func (tr *transactionRepository) Store(ctx context.Context, transactionDomain *t
 	if result.Error != nil {
 		return transaction.Domain{}, result.Error
 	}
-	err := tr.conn.Preload("User").First(&rec, rec.ID).Error
+	err := tr.conn.Preload("User").Preload("TransactionItems").Preload("TransactionItems.Product").First(&rec, rec.ID).Error
 	if err != nil {
 		return transaction.Domain{}, result.Error
 	}

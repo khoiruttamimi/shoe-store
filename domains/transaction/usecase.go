@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"context"
+	"shoe-store/domains"
 	"time"
 )
 
@@ -17,11 +18,12 @@ func NewTransactionUsecase(timeout time.Duration, cr Repository) Usecase {
 	}
 }
 
-func (bu *transactionUsecase) Store(ctx context.Context, transactionDomain *Domain) (Domain, error) {
-	ctx, cancel := context.WithTimeout(ctx, bu.contextTimeout)
+func (tu *transactionUsecase) Store(ctx context.Context, transactionDomain *Domain) (Domain, error) {
+	ctx, cancel := context.WithTimeout(ctx, tu.contextTimeout)
 	defer cancel()
 
-	result, err := bu.transactionRepository.Store(ctx, transactionDomain)
+	transactionDomain.Status = "paid"
+	result, err := tu.transactionRepository.Store(ctx, transactionDomain)
 	if err != nil {
 		return Domain{}, err
 	}
@@ -29,10 +31,25 @@ func (bu *transactionUsecase) Store(ctx context.Context, transactionDomain *Doma
 	return result, nil
 }
 
-func (bu *transactionUsecase) GetAll(ctx context.Context) ([]Domain, error) {
-	resp, err := bu.transactionRepository.GetAll(ctx, "paid")
+func (tu *transactionUsecase) GetAll(ctx context.Context, userID int) ([]Domain, error) {
+	resp, err := tu.transactionRepository.GetAll(ctx, userID)
 	if err != nil {
 		return []Domain{}, err
 	}
 	return resp, nil
+}
+
+func (tu *transactionUsecase) GetByID(ctx context.Context, transactionID int, userID int) (Domain, error) {
+	ctx, cancel := context.WithTimeout(ctx, tu.contextTimeout)
+	defer cancel()
+
+	if transactionID <= 0 {
+		return Domain{}, domains.ErrProductIDResource
+	}
+	res, err := tu.transactionRepository.GetByID(ctx, transactionID, userID)
+	if err != nil {
+		return Domain{}, err
+	}
+
+	return res, nil
 }

@@ -40,5 +40,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	transaction := api.Group("transactions", jwtAuth)
 	transaction.POST("", cl.TransactionController.Shopping)
 	transaction.GET("", cl.TransactionController.GetAll)
+	transaction.GET("/:id", cl.TransactionController.GetByID)
 
 }
