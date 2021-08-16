@@ -36,6 +36,7 @@ func (pu *productUsecase) GetAll(ctx context.Context, page, limit int) ([]Domain
 
 	return res, total, nil
 }
+
 func (pu *productUsecase) GetByID(ctx context.Context, productID int) (Domain, error) {
 	ctx, cancel := context.WithTimeout(ctx, pu.contextTimeout)
 	defer cancel()
@@ -50,6 +51,7 @@ func (pu *productUsecase) GetByID(ctx context.Context, productID int) (Domain, e
 
 	return res, nil
 }
+
 func (pu *productUsecase) GetByCode(ctx context.Context, productCode string) (Domain, error) {
 	ctx, cancel := context.WithTimeout(ctx, pu.contextTimeout)
 	defer cancel()

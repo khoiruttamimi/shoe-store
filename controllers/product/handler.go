@@ -93,11 +93,11 @@ func (ctrl *ProductController) GetByID(c echo.Context) error {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid parameter id"))
 	}
 	resp, err := ctrl.productUseCase.GetByID(ctx, id)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid parameter id"))
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))

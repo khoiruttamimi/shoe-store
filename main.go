@@ -17,6 +17,8 @@ import (
 	_transactionUsecase "shoe-store/domains/transaction"
 	_transactionRepo "shoe-store/drivers/databases/transaction"
 
+	_transactionItemRepo "shoe-store/drivers/databases/transactionItem"
+
 	_dbDriver "shoe-store/drivers/mysql"
 
 	_ipLocatorDriver "shoe-store/drivers/thirdparties/iplocator"
@@ -50,6 +52,7 @@ func dbMigrate(db *gorm.DB) {
 		&_brandRepo.Brand{},
 		&_userRepo.Users{},
 		&_transactionRepo.Transaction{},
+		&_transactionItemRepo.TransactionItem{},
 	)
 }
 
