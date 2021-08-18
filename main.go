@@ -17,6 +17,10 @@ import (
 	_transactionUsecase "shoe-store/domains/transaction"
 	_transactionRepo "shoe-store/drivers/databases/transaction"
 
+	_wishlistController "shoe-store/controllers/wishlist"
+	_wishlistUsecase "shoe-store/domains/wishlist"
+	_wishlistRepo "shoe-store/drivers/databases/wishlist"
+
 	_transactionItemRepo "shoe-store/drivers/databases/transactionItem"
 
 	_dbDriver "shoe-store/drivers/mysql"
@@ -53,6 +57,7 @@ func dbMigrate(db *gorm.DB) {
 		&_userRepo.Users{},
 		&_transactionRepo.Transaction{},
 		&_transactionItemRepo.TransactionItem{},
+		&_wishlistRepo.Wishlist{},
 	)
 }
 
@@ -94,12 +99,17 @@ func main() {
 	transactionUsecase := _transactionUsecase.NewTransactionUsecase(timeoutContext, transactionRepo)
 	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase)
 
+	wishlistRepo := _wishlistRepo.NewWishlistRepository(db)
+	wishlistUsecase := _wishlistUsecase.NewWishlistUsecase(timeoutContext, wishlistRepo)
+	wishlistCtrl := _wishlistController.NewWishlistController(wishlistUsecase)
+
 	routesInit := _routes.ControllerList{
 		JWTMiddleware:         configJWT.Init(),
 		UserController:        *userCtrl,
 		ProductController:     *productCtrl,
 		BrandController:       *brandCtrl,
 		TransactionController: *transactionCtrl,
+		WishlistController:    *wishlistCtrl,
 	}
 	routesInit.RouteRegister(e)
 
