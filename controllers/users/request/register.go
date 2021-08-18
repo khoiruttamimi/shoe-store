@@ -6,6 +6,7 @@ type UserRegister struct {
 	Name     string `json:"name"`
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
+	AdminKey string `json:"admin_key"`
 }
 
 func (req *UserRegister) ToDomain() *users.Domain {

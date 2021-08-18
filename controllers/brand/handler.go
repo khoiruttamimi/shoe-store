@@ -1,9 +1,7 @@
 package brand
 
 import (
-	"errors"
 	"net/http"
-	"shoe-store/app/middleware"
 	"shoe-store/controllers/brand/request"
 	"shoe-store/controllers/brand/response"
 	"shoe-store/domains/brand"
@@ -25,11 +23,7 @@ func NewBrandController(bu brand.Usecase) *BrandController {
 
 func (ctrl *BrandController) Store(c echo.Context) error {
 	ctx := c.Request().Context()
-	userRole := middleware.GetUser(c).Role
 
-	if userRole == "customer" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid role"))
-	}
 	req := request.Brand{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
