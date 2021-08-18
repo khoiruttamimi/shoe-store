@@ -38,7 +38,6 @@ func (uc *userUsecase) Register(ctx context.Context, userDomain *Domain) (Domain
 	}
 
 	userDomain.Password, err = encrypt.Hash(userDomain.Password)
-	userDomain.Role = "customer"
 	userDomain.Status = true
 	if err != nil {
 		return Domain{}, "", domains.ErrInternalServer
@@ -47,7 +46,7 @@ func (uc *userUsecase) Register(ctx context.Context, userDomain *Domain) (Domain
 	if err != nil {
 		return Domain{}, "", err
 	}
-	token := uc.jwtAuth.GenerateToken(user.ID)
+	token := uc.jwtAuth.GenerateToken(user.ID, user.Role)
 	return user, token, nil
 }
 
@@ -68,7 +67,7 @@ func (uc *userUsecase) Login(ctx context.Context, userDomain *Domain) (Domain, s
 		return Domain{}, "", domains.ErrInvalidCredential
 	}
 
-	token := uc.jwtAuth.GenerateToken(user.ID)
+	token := uc.jwtAuth.GenerateToken(user.ID, user.Role)
 	return user, token, nil
 }
 

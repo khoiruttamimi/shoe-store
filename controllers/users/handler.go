@@ -21,7 +21,7 @@ func NewUserController(uc users.Usecase) *UserController {
 	}
 }
 
-func (ctrl *UserController) Register(c echo.Context) error {
+func (ctrl *UserController) RegisterUser(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := request.UserRegister{}
@@ -29,7 +29,28 @@ func (ctrl *UserController) Register(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
-	user, token, err := ctrl.userUseCase.Register(ctx, req.ToDomain())
+	reqDomain := req.ToDomain()
+	reqDomain.Role = "customer"
+	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	response := response.GetAuthResponse(user, token)
+	return controller.NewSuccessResponse(c, response)
+}
+
+func (ctrl *UserController) RegisterAdmin(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	req := request.UserRegister{}
+	if err := c.Bind(&req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	reqDomain := req.ToDomain()
+	reqDomain.Role = "admin"
+	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
