@@ -3,6 +3,7 @@ package wishlist
 import (
 	"shoe-store/domains/wishlist"
 	"shoe-store/drivers/databases/product"
+	"shoe-store/drivers/databases/users"
 
 	"time"
 )
@@ -10,6 +11,7 @@ import (
 type Wishlist struct {
 	ID        int
 	UserID    int
+	User      users.Users
 	ProductID int
 	Product   product.Product
 	Qty       int
