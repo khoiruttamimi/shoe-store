@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"net/http"
 	"shoe-store/app/middleware"
 	controller "shoe-store/controllers"
@@ -9,6 +10,7 @@ import (
 	"shoe-store/domains/users"
 
 	echo "github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
 )
 
 type UserController struct {
@@ -48,6 +50,9 @@ func (ctrl *UserController) RegisterAdmin(c echo.Context) error {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
+	if req.AdminKey != viper.GetString(`admin_key`) {
+		return controller.NewErrorResponse(c, http.StatusForbidden, errors.New("invalid admin key"))
+	}
 	reqDomain := req.ToDomain()
 	reqDomain.Role = "admin"
 	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)

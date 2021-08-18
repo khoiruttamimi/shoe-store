@@ -3,7 +3,6 @@ package product
 import (
 	"errors"
 	"net/http"
-	"shoe-store/app/middleware"
 	controller "shoe-store/controllers"
 	"shoe-store/controllers/product/request"
 	"shoe-store/controllers/product/response"
@@ -26,11 +25,7 @@ func NewProductController(productUC product.Usecase) *ProductController {
 
 func (ctrl *ProductController) Store(c echo.Context) error {
 	ctx := c.Request().Context()
-	userRole := middleware.GetUser(c).Role
 
-	if userRole == "customer" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid role"))
-	}
 	req := request.Product{}
 	if err := c.Bind(&req); err != nil {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
@@ -46,11 +41,7 @@ func (ctrl *ProductController) Store(c echo.Context) error {
 
 func (ctrl *ProductController) Update(c echo.Context) error {
 	ctx := c.Request().Context()
-	userRole := middleware.GetUser(c).Role
 
-	if userRole == "customer" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid role"))
-	}
 	id := c.Param("id")
 	if strings.TrimSpace(id) == "" {
 		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("missing required id"))

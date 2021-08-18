@@ -1,6 +1,7 @@
 package routes
 
 import (
+	middlewareApp "shoe-store/app/middleware"
 	"shoe-store/controllers/brand"
 	"shoe-store/controllers/product"
 	"shoe-store/controllers/transaction"
@@ -22,6 +23,8 @@ type ControllerList struct {
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	jwtAuth := middleware.JWTWithConfig(cl.JWTMiddleware)
+	jwtAdmin := middlewareApp.RoleValidation("admin")
+
 	api := e.Group("v1/api/")
 	users := api.Group("users")
 	users.POST("/register", cl.UserController.RegisterUser)
@@ -33,14 +36,14 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	brand := api.Group("brands", jwtAuth)
 	brand.GET("", cl.BrandController.GetAll)
 	//hanya admin
-	brand.POST("", cl.BrandController.Store)
+	brand.POST("", cl.BrandController.Store, jwtAdmin)
 
 	product := api.Group("products", jwtAuth)
 	product.GET("", cl.ProductController.GetAll)
 	product.GET("/:id", cl.ProductController.GetByID)
 	//hanya admin
-	product.POST("", cl.ProductController.Store)
-	product.PUT("/:id", cl.ProductController.Update)
+	product.POST("", cl.ProductController.Store, jwtAdmin)
+	product.PUT("/:id", cl.ProductController.Update, jwtAdmin)
 
 	transaction := api.Group("transactions", jwtAuth)
 	transaction.POST("", cl.TransactionController.Shopping)
