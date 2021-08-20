@@ -1,7 +1,6 @@
 package wishlist
 
 import (
-	"net/http"
 	"shoe-store/app/middleware"
 	"shoe-store/controllers/wishlist/request"
 	"shoe-store/controllers/wishlist/response"
@@ -28,14 +27,14 @@ func (ctrl *WishlistController) AddWishlist(c echo.Context) error {
 
 	req := request.Wishlist{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	reqDomain := req.ToDomain()
 	reqDomain.UserID = userID
 	resp, err := ctrl.wishlistUsecase.Store(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
@@ -47,7 +46,7 @@ func (ctrl *WishlistController) GetAll(c echo.Context) error {
 
 	resp, err := ctrl.wishlistUsecase.GetAll(ctx, userID)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	responseController := []response.Wishlist{}

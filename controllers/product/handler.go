@@ -1,11 +1,10 @@
 package product
 
 import (
-	"errors"
-	"net/http"
 	controller "shoe-store/controllers"
 	"shoe-store/controllers/product/request"
 	"shoe-store/controllers/product/response"
+	"shoe-store/domains"
 	"shoe-store/domains/product"
 	"strconv"
 	"strings"
@@ -28,12 +27,12 @@ func (ctrl *ProductController) Store(c echo.Context) error {
 
 	req := request.Product{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	resp, err := ctrl.productUseCase.Store(ctx, req.ToDomain())
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
@@ -44,12 +43,12 @@ func (ctrl *ProductController) Update(c echo.Context) error {
 
 	id := c.Param("id")
 	if strings.TrimSpace(id) == "" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("missing required id"))
+		return controller.NewErrorResponse(c, domains.ErrMissingID)
 	}
 
 	req := request.Product{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	domainReq := req.ToDomain()
@@ -57,7 +56,7 @@ func (ctrl *ProductController) Update(c echo.Context) error {
 	domainReq.ID = idInt
 	resp, err := ctrl.productUseCase.Update(ctx, domainReq)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(*resp))
@@ -76,7 +75,7 @@ func (ctrl *ProductController) GetAll(c echo.Context) error {
 	}
 	resp, total, err := ctrl.productUseCase.GetAll(ctx, page, limit)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	responseController := []response.Product{}
@@ -93,11 +92,11 @@ func (ctrl *ProductController) GetByID(c echo.Context) error {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid parameter id"))
+		return controller.NewErrorResponse(c, domains.ErrParamID)
 	}
 	resp, err := ctrl.productUseCase.GetByID(ctx, id)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))

@@ -1,12 +1,11 @@
 package users
 
 import (
-	"errors"
-	"net/http"
 	"shoe-store/app/middleware"
 	controller "shoe-store/controllers"
 	"shoe-store/controllers/users/request"
 	"shoe-store/controllers/users/response"
+	"shoe-store/domains"
 	"shoe-store/domains/users"
 
 	echo "github.com/labstack/echo/v4"
@@ -28,14 +27,14 @@ func (ctrl *UserController) RegisterUser(c echo.Context) error {
 
 	req := request.UserRegister{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	reqDomain := req.ToDomain()
 	reqDomain.Role = "customer"
 	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	response := response.GetAuthResponse(user, token)
@@ -47,17 +46,17 @@ func (ctrl *UserController) RegisterAdmin(c echo.Context) error {
 
 	req := request.UserRegister{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	if req.AdminKey != viper.GetString(`admin_key`) {
-		return controller.NewErrorResponse(c, http.StatusForbidden, errors.New("invalid admin key"))
+		return controller.NewErrorResponse(c, domains.ErrAdminKey)
 	}
 	reqDomain := req.ToDomain()
 	reqDomain.Role = "admin"
 	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	response := response.GetAuthResponse(user, token)
@@ -69,12 +68,12 @@ func (ctrl *UserController) Login(c echo.Context) error {
 
 	req := request.UserLogin{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	user, token, err := ctrl.userUseCase.Login(ctx, req.ToDomain())
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	response := response.GetAuthResponse(user, token)
@@ -87,7 +86,7 @@ func (ctrl *UserController) GetProfile(c echo.Context) error {
 
 	user, err := ctrl.userUseCase.GetProfile(ctx, userID)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 	response := response.GetProfileResponse(user)
 	return controller.NewSuccessResponse(c, response)
@@ -99,14 +98,14 @@ func (ctrl *UserController) UpdateProfile(c echo.Context) error {
 
 	req := request.UpdateProfile{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	reqDomain := req.ToDomain()
 	reqDomain.ID = userID
 	user, err := ctrl.userUseCase.UpdateProfile(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 	response := response.GetProfileResponse(user)
 	return controller.NewSuccessResponse(c, response)

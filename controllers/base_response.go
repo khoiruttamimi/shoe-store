@@ -48,9 +48,11 @@ func NewSuccessResponseWithPagination(c echo.Context, data interface{}, paginati
 	return c.JSON(http.StatusOK, response)
 }
 
-func NewErrorResponse(c echo.Context, status int, err error) error {
+func NewErrorResponse(c echo.Context, err error) error {
 	response := BaseResponse{}
 	response.ErrorMessage = err.Error()
-
-	return c.JSON(status, response)
+	if code, errCode := ErrorCode[err.Error()]; errCode {
+		return c.JSON(code, response)
+	}
+	return c.JSON(500, response)
 }
