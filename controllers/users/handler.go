@@ -35,7 +35,7 @@ func (ctrl *UserController) RegisterUser(c echo.Context) error {
 	reqDomain.Role = "customer"
 	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
 	response := response.GetAuthResponse(user, token)
@@ -57,7 +57,7 @@ func (ctrl *UserController) RegisterAdmin(c echo.Context) error {
 	reqDomain.Role = "admin"
 	user, token, err := ctrl.userUseCase.Register(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
 	response := response.GetAuthResponse(user, token)
@@ -74,7 +74,7 @@ func (ctrl *UserController) Login(c echo.Context) error {
 
 	user, token, err := ctrl.userUseCase.Login(ctx, req.ToDomain())
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
 	}
 
 	response := response.GetAuthResponse(user, token)

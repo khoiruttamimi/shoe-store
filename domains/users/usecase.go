@@ -60,7 +60,7 @@ func (uc *userUsecase) Login(ctx context.Context, userDomain *Domain) (Domain, s
 
 	user, err := uc.userRepository.GetByPhone(ctx, userDomain.Phone)
 	if err != nil {
-		return Domain{}, "", err
+		return Domain{}, "", domains.ErrInvalidCredential
 	}
 
 	if !encrypt.ValidateHash(userDomain.Password, user.Password) {
