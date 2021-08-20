@@ -7,13 +7,9 @@ import (
 )
 
 type BaseResponse struct {
-	Meta struct {
-		Status   int      `json:"rc"`
-		Message  string   `json:"message"`
-		Messages []string `json:"messages,omitempty"`
-	} `json:"meta"`
-	Data       interface{} `json:"data"`
-	Pagination *Pagination `json:"pagination,omitempty"`
+	ErrorMessage string      `json:"error_message,omitempty"`
+	Data         interface{} `json:"data"`
+	Pagination   *Pagination `json:"pagination,omitempty"`
 }
 
 type Pagination struct {
@@ -40,16 +36,12 @@ func PaginationRes(page, count, limit int) Pagination {
 
 func NewSuccessResponse(c echo.Context, data interface{}) error {
 	response := BaseResponse{}
-	response.Meta.Status = http.StatusOK
-	response.Meta.Message = "Success"
 	response.Data = data
 
 	return c.JSON(http.StatusOK, response)
 }
 func NewSuccessResponseWithPagination(c echo.Context, data interface{}, pagination Pagination) error {
 	response := BaseResponse{}
-	response.Meta.Status = http.StatusOK
-	response.Meta.Message = "Success"
 	response.Data = data
 	response.Pagination = &pagination
 
@@ -58,9 +50,7 @@ func NewSuccessResponseWithPagination(c echo.Context, data interface{}, paginati
 
 func NewErrorResponse(c echo.Context, status int, err error) error {
 	response := BaseResponse{}
-	response.Meta.Status = status
-	response.Meta.Message = "Something not right"
-	response.Meta.Messages = []string{err.Error()}
+	response.ErrorMessage = err.Error()
 
 	return c.JSON(status, response)
 }
