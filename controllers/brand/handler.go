@@ -1,7 +1,6 @@
 package brand
 
 import (
-	"net/http"
 	"shoe-store/controllers/brand/request"
 	"shoe-store/controllers/brand/response"
 	"shoe-store/domains/brand"
@@ -26,12 +25,12 @@ func (ctrl *BrandController) Store(c echo.Context) error {
 
 	req := request.Brand{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	resp, err := ctrl.brandUsecase.Store(ctx, req.ToDomain())
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
@@ -42,7 +41,7 @@ func (ctrl *BrandController) GetAll(c echo.Context) error {
 
 	resp, err := ctrl.brandUsecase.GetAll(ctx)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	responseController := []response.Brand{}

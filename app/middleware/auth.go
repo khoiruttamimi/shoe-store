@@ -1,9 +1,8 @@
 package middleware
 
 import (
-	"errors"
-	"net/http"
 	controller "shoe-store/controllers"
+	"shoe-store/domains"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -27,7 +26,7 @@ func (jwtConf *ConfigJWT) Init() middleware.JWTConfig {
 		Claims:     &JwtCustomClaims{},
 		SigningKey: []byte(jwtConf.SecretJWT),
 		ErrorHandlerWithContext: middleware.JWTErrorHandlerWithContext(func(e error, c echo.Context) error {
-			return controller.NewErrorResponse(c, http.StatusForbidden, e)
+			return controller.NewErrorResponse(c, e)
 		}),
 	}
 }
@@ -64,7 +63,7 @@ func RoleValidation(role string) echo.MiddlewareFunc {
 			if claims.Role == role {
 				return hf(c)
 			} else {
-				return controller.NewErrorResponse(c, http.StatusForbidden, errors.New("forbidden roles"))
+				return controller.NewErrorResponse(c, domains.ErrForbiddenRoles)
 			}
 		}
 	}

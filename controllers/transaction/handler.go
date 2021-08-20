@@ -1,11 +1,10 @@
 package transaction
 
 import (
-	"errors"
-	"net/http"
 	"shoe-store/app/middleware"
 	"shoe-store/controllers/transaction/request"
 	"shoe-store/controllers/transaction/response"
+	"shoe-store/domains"
 	"shoe-store/domains/transaction"
 	"strconv"
 
@@ -30,13 +29,13 @@ func (ctrl *TransactionController) Shopping(c echo.Context) error {
 
 	req := request.Transaction{}
 	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+		return controller.NewErrorResponse(c, err)
 	}
 	reqDomain := req.ToDomain()
 	reqDomain.UserID = userID
 	resp, err := ctrl.transactionUsecase.Store(ctx, reqDomain)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
@@ -48,7 +47,7 @@ func (ctrl *TransactionController) GetAll(c echo.Context) error {
 
 	resp, err := ctrl.transactionUsecase.GetAll(ctx, userID)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	responseController := []response.Transaction{}
@@ -65,11 +64,11 @@ func (ctrl *TransactionController) GetByID(c echo.Context) error {
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("invalid parameter id"))
+		return controller.NewErrorResponse(c, domains.ErrParamID)
 	}
 	resp, err := ctrl.transactionUsecase.GetByID(ctx, id, userID)
 	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+		return controller.NewErrorResponse(c, err)
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
