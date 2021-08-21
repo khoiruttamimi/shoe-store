@@ -52,3 +52,12 @@ func (wu *wishlistUsecase) GetAll(ctx context.Context, userID int) ([]Domain, er
 	}
 	return resp, nil
 }
+
+func (wu *wishlistUsecase) Delete(ctx context.Context, wishlistDomain *Domain) (Domain, error) {
+
+	resp, err := wu.wishlistRepository.Delete(ctx, wishlistDomain)
+	if err != nil {
+		return Domain{}, err
+	}
+	return resp, nil
+}

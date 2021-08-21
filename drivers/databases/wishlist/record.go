@@ -6,6 +6,8 @@ import (
 	"shoe-store/drivers/databases/users"
 
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Wishlist struct {
@@ -17,6 +19,7 @@ type Wishlist struct {
 	Qty       int
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	gorm.DeletedAt
 }
 
 func FromDomain(domain *wishlist.Domain) *Wishlist {

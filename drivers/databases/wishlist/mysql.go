@@ -69,3 +69,13 @@ func (wr *wishlistRepository) Update(ctx context.Context, wishlistDomain *wishli
 	}
 	return rec.ToDomain(), nil
 }
+
+func (wr *wishlistRepository) Delete(ctx context.Context, wishlistDomain *wishlist.Domain) (wishlist.Domain, error) {
+	rec := FromDomain(wishlistDomain)
+
+	result := wr.conn.Delete(&rec)
+	if result.Error != nil {
+		return wishlist.Domain{}, result.Error
+	}
+	return rec.ToDomain(), nil
+}

@@ -19,6 +19,7 @@ type Domain struct {
 type Usecase interface {
 	Store(ctx context.Context, wishlistDomain *Domain) (Domain, error)
 	GetAll(ctx context.Context, userID int) ([]Domain, error)
+	Delete(ctx context.Context, wishlistDomain *Domain) (Domain, error)
 }
 
 type Repository interface {
@@ -26,4 +27,5 @@ type Repository interface {
 	CheckWishlist(ctx context.Context, UserID, ProductID int) (Domain, error)
 	Store(ctx context.Context, wishlistDomain *Domain) (Domain, error)
 	Update(ctx context.Context, wishlistDomain *Domain) (Domain, error)
+	Delete(ctx context.Context, wishlistDomain *Domain) (Domain, error)
 }
