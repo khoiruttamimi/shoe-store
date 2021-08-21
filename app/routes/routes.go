@@ -53,4 +53,5 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	wishlist := api.Group("wishlist", jwtAuth)
 	wishlist.POST("", cl.WishlistController.AddWishlist)
 	wishlist.GET("", cl.WishlistController.GetAll)
+	wishlist.DELETE("/:id", cl.WishlistController.Delete)
 }

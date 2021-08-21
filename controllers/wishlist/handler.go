@@ -4,7 +4,9 @@ import (
 	"shoe-store/app/middleware"
 	"shoe-store/controllers/wishlist/request"
 	"shoe-store/controllers/wishlist/response"
+	"shoe-store/domains"
 	"shoe-store/domains/wishlist"
+	"strconv"
 
 	controller "shoe-store/controllers"
 
@@ -55,4 +57,21 @@ func (ctrl *WishlistController) GetAll(c echo.Context) error {
 	}
 
 	return controller.NewSuccessResponse(c, responseController)
+}
+
+func (ctrl *WishlistController) Delete(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return controller.NewErrorResponse(c, domains.ErrParamID)
+	}
+	wishlistDomain := wishlist.Domain{}
+	wishlistDomain.ID = id
+	resp, err := ctrl.wishlistUsecase.Delete(ctx, &wishlistDomain)
+	if err != nil {
+		return controller.NewErrorResponse(c, err)
+	}
+
+	return controller.NewSuccessResponse(c, response.FromDomain(resp))
 }
